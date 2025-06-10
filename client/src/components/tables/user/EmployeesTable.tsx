@@ -8,12 +8,14 @@ interface EmployeeTable {
   refreshEmployees: boolean;
   onEditEmployee: (employee: Employees) => void;
   onDeleteEmployee: (employee: Employees) => void;
+  onManageAccess: (employee: Employees) => void
 }
 
 const EmployeesTable = ({
   refreshEmployees,
   onEditEmployee,
   onDeleteEmployee,
+  onManageAccess,
 }: EmployeeTable) => {
   const [state, setState] = useState({
     loadingEmployees: true,
@@ -50,9 +52,8 @@ const EmployeesTable = ({
     let fullName = "";
 
     if (employee.middle_name) {
-      fullName = `${employee.last_name}, ${
-        employee.first_name
-      } ${employee.middle_name.charAt(0)}.`;
+      fullName = `${employee.last_name}, ${employee.first_name
+        } ${employee.middle_name.charAt(0)}.`;
     } else {
       fullName = `${employee.last_name}, ${employee.first_name}`;
     }
@@ -81,6 +82,7 @@ const EmployeesTable = ({
             <th>Role</th>
             <th>Email</th>
             <th>Action</th>
+            <th>Access</th>
           </tr>
         </thead>
         <tbody>
@@ -118,6 +120,11 @@ const EmployeesTable = ({
                       Delete
                     </button>
                   </div>
+                </td>
+                <td>
+                  <button type="button" className="btn btn-info bnt-sm" onClick={() => onManageAccess(employee)}>
+                    Manage Access
+                  </button>
                 </td>
               </tr>
             ))

@@ -40,6 +40,14 @@ const IngredientService = {
         throw error;
       });
   },
+
+  loadLowStockIngredients: async () => {
+    return AxiosInstance.get("/ingredients/low-stock")
+      .then((response) => response)
+      .catch((error) => {
+        throw error;
+      });
+  },
 };
 
 export default IngredientService;

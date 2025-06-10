@@ -9,6 +9,8 @@ interface OrderReceiptModalProps {
   message: string;
   orderNumber?: string | number;
   orderDate?: string;
+  amountReceived?: number;
+  change?: number;
   isSuccess?: boolean;
   isVisible?: boolean;
 }
@@ -21,6 +23,8 @@ function OrderReceiptModal({
   message,
   orderNumber,
   orderDate,
+  amountReceived = 0,
+  change = 0,
   isSuccess = true,
   isVisible = true,
 }: OrderReceiptModalProps) {
@@ -31,20 +35,11 @@ function OrderReceiptModal({
   };
 
   return (
-    <div
-      className="modal show d-block"
-      tabIndex={-1}
-      style={{ background: "rgba(0,0,0,0.5)" }}
-    >
+    <div className="modal show d-block" tabIndex={-1}>
       <div className="modal-dialog">
         <div className="modal-content" id="receipt-content">
           <div className="modal-header">
             <h5 className="modal-title">Order Receipt</h5>
-            <button
-              type="button"
-              className="btn-close"
-              onClick={onClose}
-            ></button>
           </div>
           <div className="modal-body">
             <AlertMessage
@@ -71,11 +66,21 @@ function OrderReceiptModal({
                   <span>
                     {item.product} x {item.quantity}
                   </span>
-                  <span>₱{item.price * item.quantity}</span>
+                  <span>₱{(item.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}
             </ul>
-            <h5>Total: ₱{total}</h5>
+            <div className="mb-2">
+              <strong>Amount Payable:</strong> ₱{total.toFixed(2)}
+              <br />
+              <strong>Amount Received:</strong> ₱{amountReceived.toFixed(2)}
+              <br />
+              <strong>Change:</strong> ₱{change.toFixed(2)}
+            </div>
+            <div className="text-center mt-3">
+              <img src="/public/feedback.png" alt="QR Code" width={96} height={96} />
+              <div className="small text-muted mt-1">Scan for Feedback</div>
+            </div>
           </div>
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={handlePrint}>

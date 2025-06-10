@@ -5,9 +5,10 @@ import IngredientService from "../../services/IngredientService";
 import ErrorHandler from "../../handler/ErrorHandler";
 import { useNavigate } from "react-router-dom";
 import type { CartItem } from "../../interfaces/CartItem";
+import type { Products } from "../../interfaces/Product";
 
 export function usePOSCart() {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Products[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -16,11 +17,9 @@ export function usePOSCart() {
   const [lastTotal, setLastTotal] = useState(0);
   const [showPayment, setShowPayment] = useState(false);
   const [ingredients, setIngredients] = useState<any[]>([]);
-  const [dataLoading, setDataLoading] = useState(true); // <-- NEW
   const navigate = useNavigate();
 
   useEffect(() => {
-    setDataLoading(true);
     Promise.all([
       ProductService.loadProducts()
         .then((res) => setProducts(res.data.products))
@@ -28,14 +27,22 @@ export function usePOSCart() {
       IngredientService.loadIngredients()
         .then((res) => setIngredients(res.data.ingredients))
         .catch(() => setIngredients([])),
-    ]).finally(() => setDataLoading(false));
+    ]);
   }, []);
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: Products) => {
+    let canMake = true;
+    if (product.ingredients && product.ingredients.length > 0) {
+      canMake = product.ingredients.every(reqIng => {
+        const stockIng = ingredients.find(i => i.ingredient_id === reqIng.ingredient_id);
+        return stockIng && stockIng.quantity_in_stock > 0;
+      });
+    }
+
     setCart((prev) => {
-      const found = prev.find((item) => item.product_id === product.product_id);
-      if (found) {
-        return prev.map((item) =>
+      const existing = prev.find(item => item.product_id === product.product_id);
+      if (existing) {
+        return prev.map(item =>
           item.product_id === product.product_id
             ? { ...item, quantity: item.quantity + 1 }
             : item
@@ -44,10 +51,9 @@ export function usePOSCart() {
       return [
         ...prev,
         {
-          product_id: product.product_id,
-          product: product.product,
-          price: product.price,
+          ...product,
           quantity: 1,
+          can_make: canMake,
         },
       ];
     });
@@ -67,35 +73,17 @@ export function usePOSCart() {
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handleCheckout = () => {
-    if (cart.length === 0) return;
-    setLoading(true);
-    setMessage("");
-    OrderService.storeOrder({
-      employee_id: 1,
-      total_amount: total,
-      items: cart.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-    })
-      .then((res) => {
-        setMessage(res.data.message || "Order placed!");
-        setLastOrder(cart);
-        setLastTotal(total);
-        setCart([]);
-        setShowReceipt(true);
-      })
-      .catch((error) => {
-        setMessage(
-          error.response?.data?.message || "Order failed. Please try again."
-        );
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const handlePaymentConfirm = (cash: number, change: number) => {
+  const handlePaymentConfirm = ({
+    amountReceived,
+    change,
+    orderNumber,
+    orderDate,
+  }: {
+    amountReceived: number;
+    change: number;
+    orderNumber: string | number;
+    orderDate?: string;
+  }) => {
     setShowPayment(false);
     setLoading(true);
     setMessage("");
@@ -107,8 +95,10 @@ export function usePOSCart() {
         quantity: item.quantity,
         price: item.price,
       })),
-      cash_received: cash,
+      cash_received: amountReceived,
       change: change,
+      order_number: orderNumber,
+      order_date: orderDate || new Date().toISOString(),
     })
       .then((res) => {
         setMessage(res.data.message || "Order placed!");
@@ -130,13 +120,13 @@ export function usePOSCart() {
   };
 
   return {
-    products: products ?? [],
-    cart: cart ?? [],
+    products,
+    cart,
     loading,
     message,
     showReceipt,
     setShowReceipt,
-    lastOrder: lastOrder ?? [],
+    lastOrder,
     lastTotal,
     showPayment,
     setShowPayment,
@@ -144,10 +134,8 @@ export function usePOSCart() {
     updateQuantity,
     removeFromCart,
     total,
-    handleCheckout,
     handlePaymentConfirm,
     setMessage,
-    ingredients: ingredients ?? [],
-    dataLoading, // <-- expose loading state for data
+    ingredients,
   };
 }

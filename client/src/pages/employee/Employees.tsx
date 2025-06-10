@@ -6,6 +6,7 @@ import EmployeesTable from "../../components/tables/user/EmployeesTable";
 import type { Employees } from "../../interfaces/Employees";
 import EditEmployeeModal from "../../components/modals/employee/EditEmployeeModal";
 import DeleteEmployeeModal from "../../components/modals/employee/DeleteEmployeeModal";
+import ManageAccessModal from "../../components/modals/employee/ManageAccessModal";
 
 const Employees = () => {
   const [refreshEmployees, setRefreshEmployees] = useState(false);
@@ -15,6 +16,7 @@ const Employees = () => {
   const [openAddEmployeeModal, setOpenAddEmployeeModal] = useState(false);
   const [openEditEmployeeModal, setOpenEditEmployeeModal] = useState(false);
   const [openDeleteEmployeeModal, setOpenDeleteEmployeeModal] = useState(false);
+  const [openManageAccessModal, setOpenManageAccessModal] = useState(false);
 
   const handleOpenEditEmployeeModal = (employee: Employees) => {
     setSelectedEmployee(employee);
@@ -34,6 +36,16 @@ const Employees = () => {
     setSelectedEmployee(null);
     setOpenEditEmployeeModal(false);
   };
+
+  const handleOpenManageAccessModal = (employee: Employees) => {
+    setSelectedEmployee(employee);
+    setOpenManageAccessModal(true);
+  }
+
+  const handleCloseManageAccessModal = () => {
+    setSelectedEmployee(null);
+    setOpenManageAccessModal(false);
+  }
 
   const content = (
     <>
@@ -57,6 +69,16 @@ const Employees = () => {
         onClose={handleCloseDeleteEmployeeModal}
       />
 
+      <ManageAccessModal
+        showModal={openManageAccessModal}
+        employee={selectedEmployee}
+        onClose={handleCloseManageAccessModal}
+        onSave={(updatedEmployee) => {
+          setSelectedEmployee(updatedEmployee);
+          setRefreshEmployees(!refreshEmployees);
+        }}
+      />
+
       <div className="nav justify-content-center">
         <NavBar />
       </div>
@@ -78,6 +100,7 @@ const Employees = () => {
               refreshEmployees={refreshEmployees}
               onEditEmployee={handleOpenEditEmployeeModal}
               onDeleteEmployee={handleOpenDeleteEmployeeModal}
+              onManageAccess={handleOpenManageAccessModal}
             />
           </div>
         </div>

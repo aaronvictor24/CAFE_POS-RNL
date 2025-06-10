@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\GenderController;
 use App\Http\Controllers\API\IngredientController;
@@ -20,6 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/employee', 'employee');
         Route::post('/logout', 'logout');
     });
+
+    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 
     Route::controller(GenderController::class)->group(function () {
         Route::get('/loadGenders', 'loadGenders');
@@ -58,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/storeIngredient', 'storeIngredient');
         Route::put('/updateIngredient/{ingredient}', 'updateIngredient');
         Route::put('/destroyIngredient/{ingredient}', 'destroyIngredient');
+        Route::get('/ingredients/low-stock', 'lowStockIngredients');
     });
 
     Route::controller(ProductIngredientController::class)->group(function () {

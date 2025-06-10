@@ -108,4 +108,17 @@ class IngredientController extends Controller
         }
         return 'In Stock';
     }
+
+
+    public function lowStockIngredients()
+    {
+        $lowStock = Ingredient::where('is_deleted', false)
+            ->whereNotNull('low_stock_threshold')
+            ->whereColumn('quantity_in_stock', '<=', 'low_stock_threshold')
+            ->get();
+
+        return response()->json([
+            'low_stock_ingredients' => $lowStock
+        ], 200);
+    }
 }
