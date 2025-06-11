@@ -60,7 +60,9 @@ const POSPage = () => {
       orderNumber,
       orderDate,
     });
-    setDiscountPercent(0); // Reset discount after transaction
+    setDiscountPercent(0);
+
+    window.localStorage.reload();
   };
 
   const content = (

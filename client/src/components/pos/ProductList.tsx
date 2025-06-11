@@ -28,6 +28,7 @@ const ProductList = ({ loadProducts, onAddToCart }: ProductListProps) => {
     // eslint-disable-next-line
   }, [loadProducts]);
 
+
   return (
     <div>
       <h4>Products</h4>
@@ -45,7 +46,7 @@ const ProductList = ({ loadProducts, onAddToCart }: ProductListProps) => {
                 className="list-group-item d-flex justify-content-between align-items-center"
               >
                 <span>
-                  {product.product} - ₱{product.price}
+                  {product.product} : ₱{product.price}
                   {!canMake && (
                     <span className="badge bg-danger ms-2">
                       Cannot make (ingredient out of stock)

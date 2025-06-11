@@ -1,5 +1,7 @@
+import jsPDF from "jspdf";
 import type { CartItem } from "../../interfaces/CartItem";
 import AlertMessage from "../AlertMessage";
+import html2canvas from "html2canvas";
 
 interface OrderReceiptModalProps {
   show: boolean;
@@ -30,8 +32,21 @@ function OrderReceiptModal({
 }: OrderReceiptModalProps) {
   if (!show) return null;
 
-  const handlePrint = () => {
-    window.print();
+  const handlePrintPDF = async () => {
+    const input = document.getElementById("receipt-content");
+    if (!input) return;
+
+    const canvas = await html2canvas(input);
+    const imgData = canvas.toDataURL("image/png");
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [canvas.width, canvas.height],
+    });
+
+    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+    pdf.save("receipt.pdf");
   };
 
   return (
@@ -83,7 +98,7 @@ function OrderReceiptModal({
             </div>
           </div>
           <div className="modal-footer">
-            <button className="btn btn-secondary" onClick={handlePrint}>
+            <button className="btn btn-secondary" onClick={handlePrintPDF}>
               Print
             </button>
             <button className="btn btn-primary" onClick={onClose}>

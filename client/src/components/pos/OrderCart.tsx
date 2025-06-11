@@ -60,7 +60,7 @@ const OrderCart = ({
             >
               <span>
                 <strong>{item.product}</strong>
-                <div className="d-inline ms-2">
+                <div className="d-inline ms-1">
                   <button
                     className="btn btn-sm btn-outline-secondary me-1"
                     onClick={() =>
@@ -70,9 +70,9 @@ const OrderCart = ({
                     -
                   </button>
                   <input
-                    type="number"
+                    type="text"
                     min={1}
-                    className="col-md-1 text-center"
+                    className="col-md-2 text-center"
                     placeholder="Qty"
                     value={item.quantity}
                     onChange={(e) =>
@@ -102,7 +102,7 @@ const OrderCart = ({
           ))}
         </ul>
       )}
-      <div className="d-flex flex-column align-items-end ">
+      <div className="d-flex flex-column align-items-end mb-3">
         <h5>Total: ₱{total}</h5>
       </div>
 

@@ -22,7 +22,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', 'logout');
     });
 
-    Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
+    Route::controller(DashboardController::class)->group(function () {
+        Route::get('/dashboard', 'loadSummary');
+        Route::get('/dashboard/summary', 'loadSummary');
+        Route::get('/dashboard/yesterday-sales', 'getYesterdaySales');
+    });
 
     Route::controller(GenderController::class)->group(function () {
         Route::get('/loadGenders', 'loadGenders');

@@ -53,13 +53,13 @@ const Sidebar = () => {
   return (
     <>
       <div className="border bg-light p-3 h-100 d-flex flex-column">
-        <h5 className="mb-4 text-center fw-bold">☕ Dela Torre Cafe</h5>
+        <h5 className="mb-4 text-center fw-bold">☕ Bitter Sweet Cafe</h5>
         <div className="d-flex align-items-center mb-3">
-          <div className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center" >
+          <div className="  text-white d-flex justify-content-center align-items-center" >
             {parsedEmployee ? parsedEmployee.first_name[0] : ""}
           </div>
           <div className="ms-2">
-            <div className="fw-bold">{handleEmployeeFullName()}</div>
+            <div className="badge bg-primary">{handleEmployeeFullName()}</div>
             <div className="text-muted" >Employee</div>
           </div>
         </div>

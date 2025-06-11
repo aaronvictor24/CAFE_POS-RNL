@@ -7,7 +7,6 @@ interface OrderHistoryTableProps {
 
 const OrderHistoryTable = ({
   orders = [],
-  onSelectOrder,
 }: OrderHistoryTableProps) => (
   <table className="table table-bordered table-hover">
     <thead>
@@ -15,7 +14,6 @@ const OrderHistoryTable = ({
         <th>No.</th>
         <th>Date/Time</th>
         <th>Total</th>
-        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -25,14 +23,6 @@ const OrderHistoryTable = ({
             <td>{index + 1}</td>
             <td>{new Date(order.created_at).toLocaleString()}</td>
             <td>₱{order.total_amount}</td>
-            <td>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() => onSelectOrder && onSelectOrder(order)}
-              >
-                View
-              </button>
-            </td>
           </tr>
         ))
       ) : (
